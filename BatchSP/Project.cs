@@ -11,6 +11,7 @@ namespace BatchSP
     {
         protected string ProjectName;
         protected SimaProServer SP;
+        protected Project() { }
         public Project(string name)
         {
             ProjectName = name;

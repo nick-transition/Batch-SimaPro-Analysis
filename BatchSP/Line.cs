@@ -8,10 +8,19 @@ namespace BatchSP
 {
     class Line
     {
-        SP;
+        private string strcontents;
+        public Line(string str)
+        {
+            strcontents = str;
 
-        //Declare function to split line
-        //Declare function to act on line
-        //Declare function for writing line
+        }
+        public void SplitString(){
+            string[] result = strcontents.Split('%');
+            Console.WriteLine(result[0]);
+            // Act on the line by calling function on the contents of the string
+            // First complete appropriate type conversions
+            // The test SP update
+             
+        }
     }
 }

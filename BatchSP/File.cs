@@ -16,13 +16,13 @@ namespace BatchSP
             directory = dir;
 	    }
 
-        public void OperateOnFile(string file){
-            string path = directory + file; 
-                using (StreamReader sr = new StreamReader(path))
+        public void OperateOnFile(string file){ 
+                using (StreamReader sr = new StreamReader(file))
                 {
                     while (sr.Peek() >= 0)
                     {
-                        Console.WriteLine(sr.ReadLine());
+                        Line str = new Line(sr.ReadLine());
+                        str.SplitString();
                     }
                 }
         }

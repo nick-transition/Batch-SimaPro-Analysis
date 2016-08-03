@@ -19,13 +19,19 @@ namespace BatchSP
             //project.Close();
 
             //Open file and stream contents
-            //File directory = new File(direc);
-            //directory.OperateOnFile("TwinBirch-Output.csv");
+            File directory = new File(direc);
+            directory.OperateOnFile(direc+"TwinBirch-Output.csv");
 
-            string[] fileEntries = Directory.GetFiles(direc);
-            foreach (string fileName in fileEntries)
-                Console.WriteLine(fileName);
+            //string[] fileEntries = Directory.GetFiles(direc);
+            //foreach (string fileName in fileEntries)
+            //    //1.Operate on the string
+            //    //2.Run the calculations
+            //    //3.Export the results
+            //    //writes all file names in directory to a console
+            //    Console.WriteLine(fileName);
+            
 
+            
             Console.WriteLine("Press <Enter> to continue...");
             Console.ReadLine();
            
