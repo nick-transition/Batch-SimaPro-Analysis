@@ -16,13 +16,13 @@ namespace BatchSP
             directory = dir;
 	    }
 
-        public void OperateOnFile(string file){ 
+        public void OperateOnFile(string file,SimaPart project){ 
                 using (StreamReader sr = new StreamReader(file))
                 {
                     while (sr.Peek() >= 0)
                     {
                         Line str = new Line(sr.ReadLine());
-                        str.SplitString();
+                        str.PumpLine(project);
                     }
                 }
         }

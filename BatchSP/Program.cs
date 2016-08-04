@@ -12,20 +12,18 @@ namespace BatchSP
     {
         static void Main(string[] args)
         {
-            //string direc = "D:/Dairy CAP/IFSM-Connection/";
+            Console.WriteLine("Started App...");
+            string direc = "D:/Dairy CAP/IFSM-Connection/";
             
             //Open and Close SimaPro
             SimaPart project = new SimaPart("DairyCAP-NS");
 
-            project.UpdateProcessMaterial("Raw milk, at dairy farm/US IFSM", "Farm Fuel Use, IFSM", "1", 0);
-            project.UpdateProcessMaterial("Raw milk, at dairy farm/US IFSM", "Dry Cow", "225", 12);
+            //Open file and stream contents
+            Console.WriteLine("Updating SimePro");
+            File file = new File(direc);
+            file.OperateOnFile(direc+"TwinBirch-Output.csv",project);
 
             project.Close();
-
-            //Open file and stream contents
-            //File directory = new File(direc);
-            //directory.OperateOnFile(direc+"TwinBirch-Output.csv");
-
             //string[] fileEntries = Directory.GetFiles(direc);
             //foreach (string fileName in fileEntries)
             //    //1.Operate on the string
