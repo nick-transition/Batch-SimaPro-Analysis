@@ -12,6 +12,7 @@ namespace BatchSP
         protected string ProjectName;
         protected SimaProServer SP;
         protected Project() { }
+        //public virtual void UpdateProcessMaterial();
         public Project(string name)
         {
             ProjectName = name;
