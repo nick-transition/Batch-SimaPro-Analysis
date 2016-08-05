@@ -9,10 +9,9 @@ namespace BatchSP
 {
     class Project
     {
-        protected string ProjectName;
+        public string ProjectName;
         public SimaProServer SP;
         protected Project() { }
-        //public virtual void UpdateProcessMaterial();
         public Project(string name)
         {
             ProjectName = name;
@@ -25,6 +24,11 @@ namespace BatchSP
             SP.OpenProject(ProjectName, "");
 
             Console.WriteLine("Opened database and project");
+        }
+        public void RunCalc(Process Pro) { 
+
+            //IPCC 2013 GWP 100a V1.01
+            
         }
         public void Close()
         {
