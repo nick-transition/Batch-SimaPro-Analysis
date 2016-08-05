@@ -31,11 +31,16 @@ namespace BatchSP
             //int numNodes = project.SP.get_NetworkChildNodeCount(0);
 
             string methodName = project.SP.get_MethodName(1);
-            //Console.WriteLine(project.SP.get_ResultIndicatorName(TResultType.rtCharacterisation, 1));
-            if (project.SP.Analyse("DairyCap-NS", TProcessType.ptMaterial, "Raw milk, at dairy farm/US IFSM","", methodName,"")) {
-                for(int i = 0; i<10; i++){
-                    Console.WriteLine(project.SP.AnalyseResult(TResultType.rtCharacterisation,i));
-                }     
+            project.SP.Analyse("DairyCAP-NS", TProcessType.ptMaterial, "Raw milk, at dairy farm/US IFSM", "Methods", "TSC Bookshelf", "N/A");
+            
+            int numRes = project.SP.get_ResultCount(TResultType.rtCharacterisation);
+            for (int i = 0; i < numRes; i++)
+            {
+                double resAm = project.SP.AnalyseResult(TResultType.rtCharacterisation, i).Amount;
+                string resName = project.SP.AnalyseResult(TResultType.rtCharacterisation, i).IndicatorName;
+                string resUname = project.SP.AnalyseResult(TResultType.rtCharacterisation, i).UnitName;
+
+                Console.WriteLine(resName, " - ", resUname, " - ", resAm);
             }
 
             project.Close();
