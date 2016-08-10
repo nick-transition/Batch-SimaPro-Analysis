@@ -15,7 +15,7 @@ namespace BatchSP
         {
             Console.WriteLine("Started App...");
             //string direc = "D:/Dairy CAP/IFSM-Connection/";
-            
+            Process pro;
             //Open and Close SimaPro
             SimaPart project = new SimaPart("DairyCAP-NS");
 
@@ -24,24 +24,28 @@ namespace BatchSP
             //File file = new File(direc);
             //file.OperateOnFile(direc+"TwinBirch-Output.csv",project);
 
-            //Run Calculation
-            // project.SP.get_MethodName(1) = GWP 100a
-            //project.SP.Analyse("DairyCAP-NS", TProcessType.ptMaterial, "Raw milk, at dairy farm/US IFSM", "IPCC 2013 GWP 100a", "V1.01","StandardCalc");
-
             //int numNodes = project.SP.get_NetworkChildNodeCount(0);
 
-            string methodName = project.SP.get_MethodName(1);
-            project.SP.Analyse("DairyCAP-NS", TProcessType.ptMaterial, "Raw milk, at dairy farm/US IFSM", "Methods", "TSC Bookshelf", "N/A");
-            
-            int numRes = project.SP.get_ResultCount(TResultType.rtCharacterisation);
-            for (int i = 0; i < numRes; i++)
-            {
-                double resAm = project.SP.AnalyseResult(TResultType.rtCharacterisation, i).Amount;
-                string resName = project.SP.AnalyseResult(TResultType.rtCharacterisation, i).IndicatorName;
-                string resUname = project.SP.AnalyseResult(TResultType.rtCharacterisation, i).UnitName;
+            string methodName = project.SP.get_MethodName(1);            
 
-                Console.WriteLine(resName, " - ", resUname, " - ", resAm);
+            if (project.SP.Network("DairyCap-NS", TProcessType.ptAssembly, "Base Scenario","Methods",methodName,""))
+            {
+
+                project.SP.NetworkCalcScore(TResultType.rtCharacterisation, "IPCC GWP 100a", "", "");
+                int uBound = project.SP.NetworkTopNodeIndex - 1;
+                for (int i = 0; i < uBound; i++)
+                {
+                    SimaProNetworkResult Res = project.SP.NetworkResult(TNodeResultType.nrIndicatorContribution,project.SP.get_NetworkChildNodeIndex(project.SP.NetworkTopNodeIndex,i),0);
+                    Console.WriteLine("Product Name:{0}\tAmount:{1}\tUnit:{2}",Res.ProductName,Res.Amount,Res.UnitName);
+                }
+                
             }
+            else
+            {
+                Console.WriteLine("Failure!!!!");
+            }
+
+ 
 
             project.Close();
             //string[] fileEntries = Directory.GetFiles(direc);
