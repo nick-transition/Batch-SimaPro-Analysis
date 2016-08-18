@@ -11,6 +11,9 @@ namespace BatchSP
     {
         public string ProjectName;
         public SimaProServer SP;
+        public Dictionary<string, int> idxDict = new Dictionary<string, int>();
+        public Dictionary<string,double> Dict = new Dictionary<string,double>();
+        private List<string> TargetPro = new List<string>();
         protected Project() { }
         public Project(string name)
         {
@@ -25,10 +28,42 @@ namespace BatchSP
 
             Console.WriteLine("Opened database and project");
         }
-        public void RunCalc(Process Pro) { 
-
-            //IPCC 2013 GWP 100a V1.01
+        public void RunCalc(string scenario, string methodName, string shortName) {
+            if (SP.Network(ProjectName, TProcessType.ptAssembly, scenario, "Methods", methodName, ""))
+            {
+                
+                SP.NetworkCalcScore(TResultType.rtCharacterisation, shortName, "", "");
+                Console.WriteLine("Success!!!");
+            }
+            else
+            {
+                Console.WriteLine("Calculation Failure!!!!");
+            }
             
+        }
+        public void CreateProcessList(List<string> list)
+        {
+            TargetPro = list;
+        }
+        public void GetIDX(int nodeIdx)
+        {
+            int numChild = SP.get_NetworkChildNodeCount(nodeIdx);
+            string curPro = SP.NetworkResult(TNodeResultType.nrIndicatorTotal, nodeIdx,0).ProductName;
+            double curAmt = SP.NetworkResult(TNodeResultType.nrIndicatorTotal, nodeIdx, 0).Amount;
+            idxDict.Add(curPro, nodeIdx);
+            for (int i = 0; i < numChild; i++)
+            {
+                int childIdx = SP.get_NetworkChildNodeIndex(nodeIdx, i);
+                string childPro = SP.NetworkResult(TNodeResultType.nrIndicatorTotal, childIdx, 0).ProductName;
+                double childAmt = SP.NetworkResult(TNodeResultType.nrIndicatorTotal, childIdx, 0).Amount;
+
+                if (!idxDict.ContainsKey(childPro) && childIdx > 0 && childAmt > .001f || !idxDict.ContainsKey(childPro) && TargetPro.Contains(childPro))
+                {
+                    Console.WriteLine(childPro);
+                    GetIDX(childIdx);
+                }
+            }
+
         }
         public void Close()
         {
