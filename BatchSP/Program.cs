@@ -21,7 +21,7 @@ namespace BatchSP
         static void Main(string[] args)
         {
             Console.WriteLine("Started App...");
-            //string direc = "D:/Dairy CAP/IFSM-Connection/";
+            string direc = "D:/Dairy CAP/IFSM-Connection/";
             //Open and Close SimaPro
             SimaPart project = new SimaPart("DairyCAP-NS");
             List<string> proNames = new List<string>();
@@ -29,9 +29,14 @@ namespace BatchSP
             List<string> targets = new List<string>();
  
             //Open file and stream contents
-            Console.WriteLine("Updating SimePro");
-            //File file = new File(direc);
-            //file.OperateOnFile(direc+"TwinBirch-Output.csv",project);
+            Console.WriteLine("Updating SimaPro");
+            File file = new File(direc);
+            file.OperateOnFile(direc+"IDXSet-Output.csv",project);
+
+            //Set up calculation output file
+            System.IO.StreamWriter fileO = new System.IO.StreamWriter("c://Users/nstoddar/Documents/calc-out.csv", false);
+
+            // We want these values even if they return zero, so let's add them to an array and send that array to our project object
             targets.AddMany("Grass pasture, at farm/US U", "High Quality Silage, IFSM", "Low Quality Silage, IFSM", "High Quality Hay, IFSM", "Low Quality Hay, IFSM", "Grain silage, IFSM/US U",
                 "High Moisture Grain", "Dry Grain, IFSM", "Purchased Grain", "Purchased Hay", "Tallow, at plant/CH WITH US ELECTRICITY U", "Degradable Crude Protein Supplement I","Undegradable Crude Protein Supplement II",
                 "Alfalfa Silage Feeding Fuel, IFSM", "Alfalfa Silage Production Fuel, IFSM", "Corn Silage Feeding Fuel, IFSM","Corn Silage Production Fuel, IFSM", "Crop Irrigation Fuel Use, IFSM","Farm Truck Fuel Use, IFSM",
@@ -40,38 +45,46 @@ namespace BatchSP
 
             project.CreateProcessList(targets);
 
+            //Run standard calc on IDXSet
             project.RunCalc("Base Scenario", "IPCC 2013 GWP 100a", "IPCC GWP 100a");
             int topNode = project.SP.NetworkTopNodeIndex;
             project.GetIDX(topNode);
+
+            // Setup the output headers
             string header = "";
-            string vals = "";
-            foreach(KeyValuePair<string,int> entry in project.idxDict)
-            {              
-                header += "\""+entry.Key+"\",";
-            }
             foreach (KeyValuePair<string, int> entry in project.idxDict)
             {
-                vals += entry.Value+",";
+                header += "\"" + entry.Key + "\",";
             }
+            fileO.WriteLine(header);
 
-            System.IO.StreamWriter file = new System.IO.StreamWriter("c://Users/nstoddar/Documents/calc-out.csv", false);
-            file.WriteLine(header);
-            file.WriteLine(vals);
-            file.Close();
+            // Begin looping through the files in the directory
+            string[] fileEntries = Directory.GetFiles(direc);
 
+            foreach (string filename in fileEntries)
+            {
+                //replace SP values with those in the current simmulation output
+                file.OperateOnFile(direc + filename, project);
+                project.GetResults();
+
+
+                string vals = "";
+
+                foreach (double value in project.Results)
+                {
+                    vals += value + ",";
+                }
+   
+                fileO.WriteLine(vals);
+
+                Console.WriteLine("Completed SimaPro results output for {0}.",filename);
+            }
+         
+            fileO.Close();
             project.Close();
-            //string[] fileEntries = Directory.GetFiles(direc);
-            //foreach (string fileName in fileEntries)
-            //    //1.Operate on the string
-            //    //2.Run the calculations
-            //    //3.Export the results
-            //    //writes all file names in directory to a console
-            //    Console.WriteLine(fileName);
             
             Console.WriteLine("Press <Enter> to continue...");
-            Console.ReadLine();
-           
-            
+            Console.ReadLine();   
         }
         
     }
