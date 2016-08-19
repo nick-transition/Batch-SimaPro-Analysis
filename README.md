@@ -9,6 +9,6 @@ This project assumes you have access to the source code of IFSM as well as the f
 * SimaPro
 
 ### Add the SimaPro Library
-Before executing the project you will want to ensure the SimaPro library is accessible to your project. You can learn more about SimaPro's COM interface in [this](https://www.pre-sustainability.com/download/Programming-The-SimaPro-COM-interface-oct2013.pdf) PDF.
+Before executing the project you will want to ensure the SimaPro library is accessible to your project. You can learn more about SimaPro's COM interface in [this PDF](https://www.pre-sustainability.com/download/Programming-The-SimaPro-COM-interface-oct2013.pdf).
 
 If you have any questions, you can email [nstoddar@uark.edu](mailto:nstoddar@uark.edu)
