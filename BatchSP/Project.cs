@@ -12,7 +12,6 @@ namespace BatchSP
         public string ProjectName;
         public SimaProServer SP;
         public Dictionary<string, int> idxDict = new Dictionary<string, int>();
-        public List<double> Results = new List<double>();
         private List<string> TargetPro = new List<string>();
         protected Project() { }
         public Project(string name)
@@ -65,13 +64,16 @@ namespace BatchSP
             }
 
         }
-        public void GetResults()
+        public List<double> GetResults()
         {
+            List<double> Results = new List<double>();
             foreach(KeyValuePair<string,int> elem in idxDict)
             {
                 double idxResult = SP.NetworkResult(TNodeResultType.nrIndicatorTotal,elem.Value,0).Amount;
+                
                 Results.Add(idxResult);
             }
+            return Results;
 
         }
         public void Close()

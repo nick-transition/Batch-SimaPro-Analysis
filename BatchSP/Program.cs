@@ -21,7 +21,7 @@ namespace BatchSP
         static void Main(string[] args)
         {
             Console.WriteLine("Started App...");
-            string direc = "D:/Dairy CAP/IFSM-Connection/";
+            string direc = "D:/Dairy CAP/IFSM-Connection/Output/";
             //Open and Close SimaPro
             SimaPart project = new SimaPart("DairyCAP-NS");
             List<string> proNames = new List<string>();
@@ -30,8 +30,8 @@ namespace BatchSP
  
             //Open file and stream contents
             Console.WriteLine("Updating SimaPro");
-            File file = new File(direc);
-            file.OperateOnFile(direc+"IDXSet-Output.csv",project);
+            File fileSet = new File();
+            //fileSet.OperateOnFile("D:/Dairy CAP/IFSM-Connection/IDXSet-Output.csv", project);
 
             //Set up calculation output file
             System.IO.StreamWriter fileO = new System.IO.StreamWriter("c://Users/nstoddar/Documents/calc-out.csv", false);
@@ -58,25 +58,30 @@ namespace BatchSP
             }
             fileO.WriteLine(header);
 
+            Console.WriteLine("Headers printed");
+
             // Begin looping through the files in the directory
             string[] fileEntries = Directory.GetFiles(direc);
 
             foreach (string filename in fileEntries)
             {
+                List<double> results = new List<double>();
                 //replace SP values with those in the current simmulation output
-                file.OperateOnFile(direc + filename, project);
-                project.GetResults();
-
+                File file = new File();
+                Console.WriteLine("Starting output for {0}",filename);
+                file.OperateOnFile(filename, project);
+                project.RunCalc("Base Scenario", "IPCC 2013 GWP 100a", "IPCC GWP 100a");
+                
+                results = project.GetResults();
 
                 string vals = "";
 
-                foreach (double value in project.Results)
+                foreach (double value in results)
                 {
                     vals += value + ",";
                 }
    
                 fileO.WriteLine(vals);
-
                 Console.WriteLine("Completed SimaPro results output for {0}.",filename);
             }
          

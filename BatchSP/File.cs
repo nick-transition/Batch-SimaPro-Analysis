@@ -10,10 +10,9 @@ namespace BatchSP
     class File
     {
 
-        private static string directory;
-        public File(string dir)
+        public File()
 	    {
-            directory = dir;
+            
 	    }
 
         public void OperateOnFile(string file,SimaPart project){ 
