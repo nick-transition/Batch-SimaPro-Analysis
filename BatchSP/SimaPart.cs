@@ -16,7 +16,7 @@ namespace BatchSP
         {
         }
 
-        public void UpdateProcessMaterial(string process,string item,string inventory,double stat) 
+        public void UpdateProcessMaterial(string process, string item,string inventory,double stat) 
         {
             if (SP.FindProcess(ProjectName, TProcessType.ptMaterial, process, out PCmaterial))
             {

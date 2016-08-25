@@ -11,7 +11,8 @@ namespace BatchSP
     {
         public string ProjectName;
         public SimaProServer SP;
-        public Dictionary<string, int> idxDict = new Dictionary<string, int>();
+        public SortedDictionary<string, int> idxDict = new SortedDictionary<string, int>();
+        public SortedDictionary <string, double> resultsDict = new SortedDictionary<string,double>();
         private List<string> TargetPro = new List<string>();
         protected Project() { }
         public Project(string name)
@@ -29,10 +30,9 @@ namespace BatchSP
         }
         public void RunCalc(string scenario, string methodName, string shortName) {
             if (SP.Network(ProjectName, TProcessType.ptAssembly, scenario, "Methods", methodName, ""))
-            {
-                
+            {          
                 SP.NetworkCalcScore(TResultType.rtCharacterisation, shortName, "", "");
-                Console.WriteLine("Success!!!");
+                Console.WriteLine("Calculation Complete");
             }
             else
             {
@@ -58,19 +58,46 @@ namespace BatchSP
 
                 if (!idxDict.ContainsKey(childPro) && childIdx > 0 && childAmt > .001f || !idxDict.ContainsKey(childPro) && TargetPro.Contains(childPro))
                 {
-                    Console.WriteLine(childPro);
                     GetIDX(childIdx);
                 }
             }
 
         }
-        public List<double> GetResults()
+        public SortedDictionary<string,double> GetResults(int nodeIdx)
         {
-            List<double> Results = new List<double>();
-            foreach(KeyValuePair<string,int> elem in idxDict)
+
+            int numChild = SP.get_NetworkChildNodeCount(nodeIdx);
+            string curPro = SP.NetworkResult(TNodeResultType.nrIndicatorTotal, nodeIdx, 0).ProductName;
+            double curAmt = SP.NetworkResult(TNodeResultType.nrIndicatorTotal, nodeIdx, 0).Amount;
+            resultsDict.Add(curPro, curAmt);
+
+            if (curPro == "Raw milk, at dairy farm/US IFSM")
             {
-                double idxResult = SP.NetworkResult(TNodeResultType.nrIndicatorTotal,elem.Value,0).Amount;
-                
+                Console.WriteLine("Raw milk Amt: {0}",curAmt);
+            }
+          
+            for (int i = 0; i < numChild; i++)
+            {
+                int childIdx = SP.get_NetworkChildNodeIndex(nodeIdx, i);
+                string childPro = SP.NetworkResult(TNodeResultType.nrIndicatorTotal, childIdx, 0).ProductName;
+                double childAmt = SP.NetworkResult(TNodeResultType.nrIndicatorTotal, childIdx, 0).Amount;
+
+                if (!resultsDict.ContainsKey(childPro) && idxDict.ContainsKey(childPro))
+                {
+                    GetResults(childIdx);
+                }
+            }
+
+            return resultsDict;
+
+        }
+        public List<string> GetNames()
+        {
+            List<string> Results = new List<string>();
+            foreach (KeyValuePair<string, int> elem in idxDict)
+            {
+                string idxResult = SP.NetworkResult(TNodeResultType.nrIndicatorTotal, elem.Value, 0).ProductName;
+
                 Results.Add(idxResult);
             }
             return Results;
