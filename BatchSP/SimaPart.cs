@@ -153,6 +153,7 @@ namespace BatchSP
 
         public void UpdateProcessProducts(string process, string item, string inventory, double stat)
         {
+            if (Convert.ToSingle(inventory) <= 0) { inventory = "1"; }
             if (SP.FindProcess(ProjectName, TProcessType.ptMaterial, process, out PCmaterial))
             {
 
